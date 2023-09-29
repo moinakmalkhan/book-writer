@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="book_detail">
+    <h1 class="heading">Book detail</h1>
+    <div class="row">
+        <div class="col-lg-4 book_detail_col">
+            <p class="d-flex justify-content-between align-content-center">Book name: <span>{{ book.name }}</span></p>
+            <p class="d-flex justify-content-between align-content-center">Book author: <span>{{ book.author }}</span></p>
+            <p>Book Collaborators: 
+                <ul>
+                    {% for collaborator in book.collaborators.all %}
+                        <li>
+                            {{ collaborator.get_full_name }}
+                            {% if book.author.id == request.user.id %}
+                            <form method="post" action="{% url "books:delete-collaborator" book.id collaborator.id %}" class="d-inline p-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger px-2 py-1">Delete</button>
+                            </form>
+                            {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </p>
+            <p>Book sections: 
+                <ul>
+                    {% for section in book.sections.all %}
+                        <li>
+                            <a href="{% url 'books:section-detail' book.id section.id %}">{{ section.title }} </a>
+                            {% if section.book.author.id == request.user.id %}
+                            <form method="post" action="{% url "books:delete-section" book.id section.id %}" class="d-inline p-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger px-2 py-1">Delete</button>
+                            </form>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </p>
+            <p class="d-flex justify-content-between align-content-center">Book created_at: <span>{{ book.created_at }}</span></p>
+            <p class="d-flex justify-content-between align-content-center">Book updated_at: <span>{{ book.updated_at }}</span></p>
+            <div>
+                <p>
+                    {% if book.author.id == request.user.id %}
+                    <form action="{% url 'books:delete' book.id %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-2 py-1">Delete</button>
+                    </form>
+                    <button type="button" class="btn btn-primary px-2 py-1">
+                        <a href="{% url 'books:update' book.id %}" class="text-decoration-none text-white">
+                            Edit
+                        </a>
+                    </button>
+                    <button type="button" class="btn btn-secondary px-2 py-1">
+                        <a href="{% url 'books:add-collaborator' book.id %}" class="text-decoration-none text-white">
+                            Add Collaborators
+                        </a>
+                    </button>
+                    <button type="button" class="btn btn-secondary px-2 py-1">
+                        <a href="{% url 'books:add-section' book.id %}" class="text-decoration-none text-white">
+                            Add Section
+                        </a>
+                    </button>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

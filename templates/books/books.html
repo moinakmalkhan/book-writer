@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table table-hover mt-5">
+  <thead>
+    <tr>
+      <th scope="col" class="text-center align-middle p-2">ID</th>
+      <th scope="col" class="text-center align-middle p-2">Name</th>
+      <th scope="col" class="text-center align-middle p-2">Collaborators</th>
+      <th scope="col" class="text-center align-middle p-2">Sections</th>
+      <th scope="col" class="text-center align-middle p-2">Your Role</th>
+      <th scope="col" class="text-center align-middle p-2">Created at</th>
+      <th scope="col" class="text-center align-middle p-2">Updated at</th>
+      <th scope="col" class="text-center align-middle p-2">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+    <tr>
+      <th scope="row" class="p-2 text-center align-middle">{{ book.id }}</th>
+      <td class="p-2 text-center align-middle">{{ book.name }}</td>
+      <td class="p-2 text-center align-middle">{{ book.collaborators.count }}</td>
+      <td class="p-2 text-center align-middle">{{ book.sections.count }}</td>
+      <td class="p-2 text-center align-middle">{% if book.author.id == request.user.id %} Author {% else %} Collaborator {% endif %}</td>
+      <td class="p-2 text-center align-middle">{{ book.created_at }}</td>
+      <td class="p-2 text-center align-middle">{{ book.updated_at }}</td>
+      <td class="p-2 text-center align-middle">
+        <button type="button" class="btn btn-primary px-2 py-1">
+          <a href="{% url 'books:detail' book.id %}" class="text-decoration-none text-white">Detail</a>
+        </button>
+        {% if book.author.id == request.user.id %}
+        <button type="button" class="btn btn-primary px-2 py-1">
+          <a href="{% url 'books:update' book.id %}" class="text-decoration-none text-white">Edit</a>
+        </button>
+        <form action="{% url 'books:delete' book.id %}" method="post" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger px-2 py-1">
+            Delete
+          </button>
+        </form>
+        <button type="button" class="btn btn-secondary px-2 py-1">
+          <a href="{% url 'books:add-collaborator' book.id %}" class="text-decoration-none text-white">Add Collaborators</a>
+        </button>
+        <button type="button" class="btn btn-secondary px-2 py-1">
+          <a href="{% url 'books:add-section' book.id %}" class="text-decoration-none text-white">Add Section</a>
+        </button>
+        {% endif %}
+      </td>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

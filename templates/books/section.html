@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Section Detail</h1>
+    <p>Section title: {{ section.title }}</p>
+    {% if section.parent %}<p>Section parent: <a href="{% url 'books:section-detail' section.parent.book.id section.parent.id %}">{{ section.parent.title }}</a></p>{% endif %}
+    <p>Section author: {{ section.author.get_full_name }}</p>
+    <p>Section Subsections: 
+        {% for subsection in section.subsections.all %}
+            <a href="{% url 'books:section-detail' subsection.book.id subsection.id %}">{{ subsection.title }}</a>
+        {% endfor %}
+    </p>
+    <p>Section content: {{ section.content }}</p>
+    <p>Section created: {{ section.created_at }}</p>
+    <p>Section updated: {{ section.updated_at }}</p>
+    <p>Section book: <a href="{% url 'books:detail' section.book.id %}">{{ section.book.name }}</a></p>
+    <p>
+        <a href="{% url 'books:update-section' section.book.id section.id %}" class="btn btn-primary py-1 px-3">Update</a> 
+        {% if section.book.author.id == request.user.id %}
+        <a href="{% url 'books:add-section' book.id %}" class="btn btn-secondary py-1 px-3">Add Section</a>
+        {% endif %}
+    </p>
+   
+{% endblock %}
